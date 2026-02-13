@@ -1,0 +1,7 @@
+{% if contraordenacoes %}
+    {% for c in contraordenacoes %}
+        <li class="list-group-item">{{ c.nome }} - {{ c.data }}</li>
+    {% endfor %}
+{% else %}
+    <li class="list-group-item">Nenhuma contra-ordenação.</li>
+{% endif %}

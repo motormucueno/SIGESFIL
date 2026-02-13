@@ -1,0 +1,9 @@
+{% if trabalhadores %}
+    <ul class="list-group">
+    {% for t in trabalhadores %}
+        <li class="list-group-item">{{ t.nome }} - {{ t.salario }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Nenhum trabalhador cadastrado.</p>
+{% endif %}

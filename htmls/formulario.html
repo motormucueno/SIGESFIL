@@ -1,0 +1,108 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulário</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <style>
+        /* Área com rolagem para os trabalhadores */
+        .formset-scroll {
+            max-height: 350px;       /* altura fixa */
+            overflow-y: auto;        /* ativa scroll vertical */
+            padding-right: 5px;
+        }
+
+        /* Cabeçalho fixo */
+        .formset-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+
+    <form method="post" class="card card-body">
+        {% csrf_token %}
+
+        <h4 class="mb-3">Dados da Empresa</h4>
+        {{ empresaFormulario|crispy }}
+
+        <hr>
+
+        <!-- CABEÇALHO FIXO -->
+        <div class="formset-header mb-2">
+            <h4 class="mb-0">
+                Trabalhadores
+                (<span id="total_trabalhadores">0</span>)
+            </h4>
+        </div>
+
+        <!-- FORMSET MANAGEMENT (OBRIGATÓRIO) -->
+        {{ trabalhadorFormulario.management_form }}
+
+        <!-- ÁREA COM SCROLL -->
+        <div class="formset-scroll">
+
+            {% for form in trabalhadorFormulario %}
+                <div class="inlineform border rounded p-3 mb-2">
+                    {{ form|crispy }}
+                </div>
+            {% endfor %}
+
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">
+            Salvar
+        </button>
+    </form>
+
+</div>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+
+<!-- jQuery Formset Plugin -->
+<script src="{% static 'js/jquery.formset.js' %}"></script>
+
+<!-- SCRIPT PRINCIPAL -->
+<script>
+    function atualizarTotalTrabalhadores() {
+        let total = $('.inlineform').length;
+        $('#total_trabalhadores').text(total);
+    }
+
+    $(function () {
+        $('.inlineform').formset({
+            addText: 'Adicionar Trabalhador',
+            deleteText: 'Remover',
+            prefix: 'trabalhadores',
+
+            added: function () {
+                atualizarTotalTrabalhadores();
+            },
+            removed: function () {
+                atualizarTotalTrabalhadores();
+            }
+        });
+
+        // Atualiza ao carregar a página
+        atualizarTotalTrabalhadores();
+    });
+</script>
+
+</body>
+</html>
+
