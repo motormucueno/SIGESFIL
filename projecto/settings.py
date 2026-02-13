@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-m-+257+5atufm-)4cqp9(pmfsdcoz38xy&j2ll7whap#x#d(#7
 DEBUG = True
 
 ALLOWED_HOSTS = ["beneditomucueno.pythonanywhere.com"]
-
+#ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -131,6 +131,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")] # Variavel para arquivo estaticos
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5" # Variavel do bootstrap
 CRISPY_TEMPLATE_PACK = "bootstrap5" # Variavel do bootrsp
