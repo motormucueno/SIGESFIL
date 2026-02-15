@@ -28,8 +28,8 @@ SECRET_KEY = 'django-insecure-m-+257+5atufm-)4cqp9(pmfsdcoz38xy&j2ll7whap#x#d(#7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#ALLOWED_HOSTS = ["beneditomucueno.pythonanywhere.com"] # variavel de produção
-ALLOWED_HOSTS = [] # variavel de desenvolvimento
+ALLOWED_HOSTS = ["beneditomucueno.pythonanywhere.com"] # variavel de produção
+#ALLOWED_HOSTS = [] # variavel de desenvolvimento
 
 # Application definition
 
@@ -131,7 +131,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")] # Variavel de devenvolvimento para arquivo estaticos
-#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Variavel de produção para arquivo estaticos
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Variavel de produção para arquivo estaticos
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5" # Variavel de bootstrap
 CRISPY_TEMPLATE_PACK = "bootstrap5" # Variavel de bootstrap
