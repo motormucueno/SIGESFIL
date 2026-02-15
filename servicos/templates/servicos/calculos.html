@@ -1,0 +1,160 @@
+{% extends 'servicos/base.html' %}
+{% block title %}Cálculos{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb bg-transparent px-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'home' %}" class="text-info text-decoration-none">
+                <i class="bi bi-house-door"></i> Início
+            </a>
+        </li>
+        <li class="breadcrumb-item active text-light" aria-current="page">
+            Cálculos
+        </li>
+    </ol>
+</nav>
+
+
+<h2 class="mb-4">
+    <i class="bi bi-calculator"></i> Cálculos Laborais
+</h2>
+
+<div class="row g-4">
+
+    <!-- SALÁRIO MÉDIO -->
+    <div class="col-md-4">
+        <div class="card text-dark p-3">
+            <h5>Salário Médio</h5>
+
+            <input type="number"
+                   id="total"
+                   class="form-control mb-2"
+                   placeholder="Total salários"
+                   step="0.01"
+                   min="0"
+                   inputmode="decimal">
+
+            <input type="number"
+                   id="num"
+                   class="form-control mb-2"
+                   placeholder="Nº trabalhadores"
+                   min="1"
+                   step="1">
+
+            <button class="btn btn-custom text-white w-100" onclick="salario()">
+                Calcular
+            </button>
+
+            <div id="r1" class="mt-2 fw-bold"></div>
+        </div>
+    </div>
+
+    <!-- HORAS EXTRAS -->
+    <div class="col-md-4">
+        <div class="card text-dark p-3">
+            <h5>Horas Extras</h5>
+
+            <input type="number"
+                   id="base"
+                   class="form-control mb-2"
+                   placeholder="Salário base"
+                   step="0.01"
+                   min="0"
+                   inputmode="decimal">
+
+            <input type="number"
+                   id="extra"
+                   class="form-control mb-2"
+                   placeholder="Horas extras"
+                   step="0.01"
+                   min="0">
+
+            <button class="btn btn-custom text-white w-100" onclick="horas()">
+                Calcular
+            </button>
+
+            <div id="r2" class="mt-2 fw-bold"></div>
+        </div>
+    </div>
+
+    <!-- INDEMNIZAÇÃO -->
+    <div class="col-md-4">
+        <div class="card text-dark p-3">
+            <h5>Indemnização</h5>
+
+            <input type="number"
+                   id="sal"
+                   class="form-control mb-2"
+                   placeholder="Salário mensal"
+                   step="0.01"
+                   min="0"
+                   inputmode="decimal">
+
+            <input type="number"
+                   id="anos"
+                   class="form-control mb-2"
+                   placeholder="Anos de serviço"
+                   step="1"
+                   min="0">
+
+            <button class="btn btn-custom text-white w-100" onclick="indemnizacao()">
+                Calcular
+            </button>
+
+            <div id="r3" class="mt-2 fw-bold"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function formatarAKZ(valor) {
+    return new Intl.NumberFormat('pt-PT', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(valor) + " AKZ";
+}
+
+function salario(){
+    let totalVal = parseFloat(total.value);
+    let numVal = parseInt(num.value);
+
+    if (isNaN(totalVal) || isNaN(numVal) || numVal <= 0){
+        alert("Preencha corretamente os campos.");
+        return;
+    }
+
+    let resultado = totalVal / numVal;
+    r1.innerText = "Resultado: " + formatarAKZ(resultado);
+}
+
+function horas(){
+    let baseVal = parseFloat(base.value);
+    let extraVal = parseFloat(extra.value);
+
+    if (isNaN(baseVal) || isNaN(extraVal)){
+        alert("Preencha corretamente os campos.");
+        return;
+    }
+
+    let resultado = (baseVal / 160) * 1.5 * extraVal;
+    r2.innerText = "Resultado: " + formatarAKZ(resultado);
+}
+
+function indemnizacao(){
+    let salVal = parseFloat(sal.value);
+    let anosVal = parseInt(anos.value);
+
+    if (isNaN(salVal) || isNaN(anosVal)){
+        alert("Preencha corretamente os campos.");
+        return;
+    }
+
+    let resultado = salVal * anosVal;
+    r3.innerText = "Resultado: " + formatarAKZ(resultado);
+}
+</script>
+
+{% endblock %}
+

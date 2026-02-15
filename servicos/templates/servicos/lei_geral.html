@@ -1,0 +1,37 @@
+{% extends 'servicos/base.html' %}
+{% block title %}Consulta Lei Geral do Trabalho{% endblock %}
+
+{% block content %}
+
+<nav aria-label="breadcrumb" class="mt-3">
+    <ol class="breadcrumb bg-transparent px-0">
+        <li class="breadcrumb-item">
+            <a href="{% url 'home' %}" class="text-info text-decoration-none">
+                <i class="bi bi-house-door"></i> Início
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'legislacao' %}" class="text-info text-decoration-none">
+                Legislação Laboral
+            </a>
+        </li>
+        <li class="breadcrumb-item active text-light" aria-current="page">
+            Lei Geral do Trabalho
+        </li>
+    </ol>
+</nav>
+
+<h2 class="mb-4">Consulta da Lei Geral do Trabalho</h2>
+
+<div class="list-group">
+    {% for artigo in artigos %}
+        <div class="list-group-item list-group-item-dark mb-2">
+            <h5>{{ artigo.titulo }}</h5>
+            <p>{{ artigo.conteudo }}</p>
+        </div>
+    {% empty %}
+        <p class="text-secondary">Nenhum artigo encontrado.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Sistema Laboral{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a1f44, #08162e);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .btn-custom {
+            background-color: #0a58ca;
+            border: none;
+        }
+
+        .btn-custom:hover {
+            background-color: #084298;
+        }
+
+        footer {
+            background-color: #08162e;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark sticky-top" style="background-color:#08162e;">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+            <i class="bi bi-building"></i> Sistema Laboral
+        </a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<footer>
+    Sistema Laboral - Desenvolvido pelo Inspector Mucueno
+</footer>
+
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

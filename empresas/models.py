@@ -37,21 +37,13 @@ class Provincia(models.Model):
     def __str__(self):
         return self.nome
 class ContraOrdenacao(models.Model):
-    nome = models.CharField("Seleccione as contra-ordenações verificadas", max_length=50)
+    nome = models.TextField("Seleccione as contra-ordenações verificadas")
+    artigo = models.CharField("Artigo", max_length=50)
     criado_em = models.DateTimeField("Data de criação", auto_now_add=True)
     actualizado_em = models.DateTimeField("Data de actualização", auto_now=True)
     class Meta:
         verbose_name = "Contra-ordenação"
         verbose_name_plural = "Contra-ordenação"
-    def __str__(self):
-        return self.nome
-class ContraOrdenacaoRecomendacao(models.Model):
-    nome = models.CharField("Seleccione as contra-ordenações verificadas", max_length=50)
-    criado_em = models.DateTimeField("Data de criação", auto_now_add=True)
-    actualizado_em = models.DateTimeField("Data de actualização", auto_now=True)
-    class Meta:
-        verbose_name = "Contra-ordenação para recomendação"
-        verbose_name_plural = "Contra-ordenação para recomendação"
     def __str__(self):
         return self.nome
 class ObjectivoInspeccao(models.Model):
