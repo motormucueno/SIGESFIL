@@ -4,7 +4,7 @@
 {% block content %}
 
 <!-- BREADCRUMB -->
-<nav aria-label="breadcrumb" class="mt-3">
+<nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb bg-transparent px-0">
         <li class="breadcrumb-item">
             <a href="{% url 'home' %}" class="text-info text-decoration-none">
@@ -22,79 +22,109 @@
     </ol>
 </nav>
 
-<h2 class="mb-4">Consulta de Contra-ordenações Laborais</h2>
+<!-- TÍTULO -->
+<h2 class="mb-4 fw-bold text-center text-md-start">
+    Consulta de Contra-ordenações Laborais
+</h2>
 
 <!-- FORMULÁRIO DE PESQUISA -->
 <form method="get" class="mb-4">
-    <div class="input-group">
+    <div class="input-group input-group-lg">
         <input
             type="text"
             name="q"
             class="form-control"
-            placeholder="Digite uma palavra (ex: multa, salário, horas)"
+            placeholder="Digite um conjunto de caracteres"
             value="{{ termo }}"
             required
         >
         <button class="btn btn-custom text-white">
-            <i class="bi bi-search"></i> Pesquisar
+            <i class="bi bi-search"></i>
         </button>
     </div>
 </form>
 
 <!-- RESULTADOS -->
 {% if termo %}
-    <h5 class="mb-4">
+    <h5 class="mb-3 text-center text-md-start">
         Resultados encontrados para:
-        <span class="text-info">"{{ termo }}"</span>
+        <span class="text-info">“{{ termo }}”</span>
+        com base no Decreto 50/25 de 19 de Fevereiro
     </h5>
 
     {% if resultados %}
 
-        {# Agrupa as contra-ordenações por artigo #}
         {% regroup resultados by artigo as artigos %}
 
-        {# ================= ARTIGO 8.º ================= #}
+        <!-- ============ ARTIGO 8.º ============ -->
         {% for grupo in artigos %}
             {% if grupo.grouper == "Artigo 8.º" %}
-                <h5 class="mt-4 text-info">Artigo 8.º</h5>
-                <ul class="list-group mb-3">
-                    {% for item in grupo.list %}
-                        <li class="list-group-item text-dark">
-                            <i class="bi bi-exclamation-circle text-danger me-2"></i>
-                            {{ item.nome }}
-                        </li>
-                    {% endfor %}
-                </ul>
+                <div class="card mb-4">
+                    <div class="card-header text-center fw-bold">
+                        Artigo 8.º (Contra-ordenações leves)
+                    </div>
+                    <div class="card-body text-muted fst-italic small p-2">
+                        Estas contra-ordenações são puníveis com coimas fixada entre:<br>
+                        - 2 a 5 vezes o salário médio mensal da empresa, se praticadas com negligência.<br>
+                        - 6 a 9 vezes o salário médio mensal da empresa, se praticadas com dolo.
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for item in grupo.list %}
+                            <li class="list-group-item text-dark">
+                                <i class="bi bi-exclamation-circle text-danger me-2"></i>
+                                {{ item.nome }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endif %}
         {% endfor %}
 
-        {# ================= ARTIGO 9.º ================= #}
+        <!-- ============ ARTIGO 9.º ============ -->
         {% for grupo in artigos %}
             {% if grupo.grouper == "Artigo 9.º" %}
-                <h5 class="mt-4 text-info">Artigo 9.º</h5>
-                <ul class="list-group mb-3">
-                    {% for item in grupo.list %}
-                        <li class="list-group-item text-dark">
-                            <i class="bi bi-exclamation-circle text-danger me-2"></i>
-                            {{ item.nome }}
-                        </li>
-                    {% endfor %}
-                </ul>
+                <div class="card mb-4">
+                    <div class="card-header text-center fw-bold">
+                        Artigo 9.º (Contra-ordenações graves)
+                    </div>
+                    <div class="card-body text-muted fst-italic small p-2">
+                        Estas contra-ordenações são puníveis com coimas fixada entre:<br>
+                        - 10 a 13 vezes o salário médio mensal da empresa, se praticadas com negligência.<br>
+                        - 14 a 17 vezes o salário médio mensal da empresa, se praticadas com dolo.
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for item in grupo.list %}
+                            <li class="list-group-item text-dark">
+                                <i class="bi bi-exclamation-circle text-danger me-2"></i>
+                                {{ item.nome }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endif %}
         {% endfor %}
 
-        {# ================= ARTIGO 10.º ================= #}
+        <!-- ============ ARTIGO 10.º ============ -->
         {% for grupo in artigos %}
             {% if grupo.grouper == "Artigo 10.º" %}
-                <h5 class="mt-4 text-info">Artigo 10.º</h5>
-                <ul class="list-group mb-3">
-                    {% for item in grupo.list %}
-                        <li class="list-group-item text-dark">
-                            <i class="bi bi-exclamation-circle text-danger me-2"></i>
-                            {{ item.nome }}
-                        </li>
-                    {% endfor %}
-                </ul>
+                <div class="card mb-4">
+                    <div class="card-header text-center fw-bold">
+                        Artigo 10.º (Contra-ordenações muito graves)
+                    </div>
+                    <div class="card-body text-muted fst-italic small p-2">
+                        Estas contra-ordenações são puníveis com coimas fixada entre:<br>
+                        - 18 a 21 vezes o salário médio mensal da empresa, se praticadas com negligência.<br>
+                        - 22 a 25 vezes o salário médio mensal da empresa, se praticadas com dolo.
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for item in grupo.list %}
+                            <li class="list-group-item text-dark">
+                                <i class="bi bi-exclamation-circle text-danger me-2"></i>
+                                {{ item.nome }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
             {% endif %}
         {% endfor %}
 
@@ -106,5 +136,6 @@
 {% endif %}
 
 {% endblock %}
+
 
 

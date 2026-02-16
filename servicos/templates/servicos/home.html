@@ -3,28 +3,66 @@
 
 {% block content %}
 
-<div class="text-center">
-    <h1 class="mb-4">Bem-vindo ao Sistema Laboral</h1>
-    <div class="row justify-content-center g-4">
+<div class="row justify-content-center text-center">
+    <div class="col-12 col-md-10 col-lg-8">
 
-        <div class="col-md-5">
-            <div class="card text-dark p-4">
-                <h4><i class="bi bi-book"></i> Consulta da Legislação</h4>
-                <a href="{% url 'legislacao' %}" class="btn btn-custom text-white mt-3 w-100">
-                    Aceder
-                </a>
+        <!-- TÍTULO -->
+        <h1 class="mb-4 fw-bold">
+            Bem-vindo <!--ao <br class="d-md-none">
+            <span class="text-info">Sistema Laboral</span> -->
+        </h1>
+
+        <p class="mb-4 text-light">
+            Consulte legislação laboral e realize cálculos essenciais
+            de forma rápida e segura.
+        </p>
+
+        <!-- CARDS -->
+        <div class="row g-4">
+
+            <!-- LEGISLAÇÃO -->
+            <div class="col-12 col-md-6">
+                <div class="card text-dark p-4 h-100">
+                    <div class="mb-3">
+                        <i class="bi bi-book fs-1 text-primary"></i>
+                    </div>
+
+                    <h4 class="fw-bold">Consulta da Legislação</h4>
+
+                    <p class="small text-muted mt-2">
+                        Contra-ordenações, Lei Geral do Trabalho
+                        e outros diplomas legais.
+                    </p>
+
+                    <a href="{% url 'legislacao' %}"
+                       class="btn btn-custom text-white mt-3 w-100">
+                        Aceder
+                    </a>
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-5">
-            <div class="card text-dark p-4">
-                <h4><i class="bi bi-calculator"></i> Cálculos Laborais</h4>
-                <a href="{% url 'calculos' %}" class="btn btn-custom text-white mt-3 w-100">
-                    Aceder
-                </a>
+            <!-- CÁLCULOS -->
+            <div class="col-12 col-md-6">
+                <div class="card text-dark p-4 h-100">
+                    <div class="mb-3">
+                        <i class="bi bi-calculator fs-1 text-primary"></i>
+                    </div>
+
+                    <h4 class="fw-bold">Cálculos Laborais</h4>
+
+                    <p class="small text-muted mt-2">
+                        Salário médio, subsídio de férias, subsídio de natal, horas extras
+                        e indemnizações por despedimento.
+                    </p>
+
+                    <a href="{% url 'calculos' %}"
+                       class="btn btn-custom text-white mt-3 w-100">
+                        Aceder
+                    </a>
+                </div>
             </div>
-        </div>
 
+        </div>
     </div>
 </div>
 
