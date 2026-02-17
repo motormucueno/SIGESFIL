@@ -27,7 +27,7 @@ def legislacao(request):
 
 # NOVAS VIEWS
 def contraordenacao(request):
-    termo = request.GET.get('q', '')
+    termo = request.GET.get('q', '').strip()
     resultados = []
 
     if termo:
