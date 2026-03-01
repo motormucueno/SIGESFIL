@@ -7,4 +7,5 @@ urlpatterns = [
     path('legislacao/', views.legislacao, name='legislacao'),
     path('contraordenacao/', views.contraordenacao, name='contraordenacao'),
     path('lei-geral/', views.lei_geral, name='lei_geral'),
+
 ]

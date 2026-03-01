@@ -1,127 +1,231 @@
+
 {% extends 'servicos/base.html' %}
 {% block title %}Consulta Lei Geral do Trabalho{% endblock %}
 
 {% block content %}
 
-<!-- BREADCRUMB -->
-<nav aria-label="breadcrumb" class="mb-3">
-    <ol class="breadcrumb bg-transparent px-0">
-        <li class="breadcrumb-item">
-            <a href="{% url 'home' %}" class="text-info text-decoration-none">
-                <i class="bi bi-house-door"></i> Início
-            </a>
-        </li>
-        <li class="breadcrumb-item">
-            <a href="{% url 'legislacao' %}" class="text-info text-decoration-none">
-                Legislação Laboral
-            </a>
-        </li>
-        <li class="breadcrumb-item active text-light" aria-current="page">
-            Lei Geral do Trabalho
-        </li>
-    </ol>
-</nav>
+<style>
+html {
+    scroll-behavior: smooth;
+}
 
-<!-- TÍTULO -->
-<h2 class="mb-4 fw-bold text-center text-md-start">
-    Consulta da Lei Geral do Trabalho
-</h2>
-<div class="m-0 small">
-    <h5>Lei 12/23 de 27 de Dezembro</h5>
-</div>
+/* Sidebar fixa */
+.sidebar-fixa {
+    max-height: 80vh;
+    overflow-y: auto;
+    position: sticky;
+    top: 20px;
+}
 
-<form method="get" class="mb-4">
-    <div class="input-group">
-        <input type="text" name="q" class="form-control"
-               placeholder="Digite uma palavra ou frase que contem na norma a ser pesquisada..."
-               value="{{ termo }}">
-        <button class="btn btn-info text-white" type="submit">
-            Pesquisar
-        </button>
-    </div>
-</form>
+.sidebar-fixa a {
+    text-decoration: none;
+    font-size: 0.9rem;
+}
 
-<!-- LISTA DE ARTIGOS -->
-{% if artigos %}
+.sidebar-fixa a:hover {
+    text-decoration: underline;
+}
+
+.sidebar-link.active {
+    font-weight: bold;
+    color: #0dcaf0 !important;
+}
+
+/* Colapsável no mobile */
+#sidebarLinks.collapsed {
+    display: none;
+}
+</style>
+
+<div class="container-fluid mt-3">
+
+
+
     <div class="row g-4">
-        {% for artigo in artigos %}
-            <div class="col-12">
-                <div class="card text-dark p-4">
 
-                    {% if artigo.capitulo %}
-                        <p class="mb-1 fw-bold text-info">
-                            {{ artigo.capitulo.numero }}: {{ artigo.capitulo.descricao }}
-                        </p>
-                    {% endif %}
+        <!-- SIDEBAR -->
+        <div class="col-md-3 mb-4">
+            <div class="card p-3 sidebar-fixa">
+                <h6 class="fw-bold mb-3 d-flex justify-content-between align-items-center">
+                    Artigos
+                    <button class="btn btn-sm btn-outline-secondary d-md-none" id="toggleSidebar">
+                        ☰
+                    </button>
+                </h6>
 
-                    {% if artigo.seccao %}
-                        <p class="mb-1 fw-bold text-warning">
-                            {{ artigo.seccao.numero }}: {{ artigo.seccao.descricao }}
-                        </p>
-                    {% endif %}
-
-                    {% if artigo.subseccao %}
-                        <p class="mb-1 fw-bold text-success">
-                            {{ artigo.subseccao.numero }}: {{ artigo.subseccao.descricao }}
-                        </p>
-                    {% endif %}
-
-                    <h5 class="fw-bold mb-2">
-                        {{ artigo.numero }} - {{ artigo.titulo|default:"(Sem título)" }}
-                    </h5>
-
-                    {% if termo %}
-                        <p class="text-muted mb-2">
-                            Mostrando {{ artigo.paragrafos|length }} de {{ artigo.total_paragrafos }} parágrafos
-                        </p>
-                    {% endif %}
-
-                    {% for paragrafo in artigo.paragrafos %}
-                        <p style="line-height: 1.7; margin-bottom: 8px;">
-                            {{ paragrafo|safe }}
-                        </p>
+                <div id="sidebarLinks">
+                    {% for artigo in todos_artigos %}
+                        <div class="mb-1">
+                            <a href="#artigo{{ artigo.id }}"
+                               class="sidebar-link text-dark"
+                               id="link{{ artigo.id }}">
+                                {{ artigo.numero }}
+                            </a>
+                        </div>
                     {% endfor %}
+                </div>
+            </div>
+        </div>
 
-                    {% if termo %}
-                        <!-- Botão para abrir modal com todos os parágrafos -->
-                        <button type="button" class="btn btn-outline-primary btn-sm mt-2"
-                                data-bs-toggle="modal" data-bs-target="#modal{{ forloop.counter }}">
-                            Ver o artigo completo
-                        </button>
+        <!-- CONTEÚDO -->
+        <div class="col-md-9">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-3">
+                <ol class="breadcrumb bg-transparent px-0">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'home' %}" class="text-info text-decoration-none">
+                            <i class="bi bi-house-door"></i> Início
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'legislacao' %}" class="text-info text-decoration-none">
+                            Legislação Laboral
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-light" aria-current="page">
+                        Lei Geral do Trabalho
+                    </li>
+                </ol>
+            </nav>
 
-                        <!-- Modal -->
-                        <div class="modal fade" id="modal{{ forloop.counter }}" tabindex="-1" aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
-                            <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">
-                                            {{ artigo.numero }} - {{ artigo.titulo|default:"(Sem título)" }}
-                                        </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        {% for paragrafo in artigo.todos_paragrafos_destacados %}
-                                            <p style="line-height: 1.7; margin-bottom: 8px;">
-                                                {{ paragrafo|safe }}
-                                            </p>
-                                        {% endfor %}
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            <h2 class="mb-4 fw-bold">Consulta da Lei Geral do Trabalho</h2>
+            <div class="small mb-3"><h5>Lei 12/23 de 27 de Dezembro</h5></div>
+            <!-- PESQUISA -->
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" class="form-control"
+                   placeholder="Digite uma palavra ou frase que contém na norma..."
+                   value="{{ termo }}">
+            <button class="btn btn-info text-white" type="submit">
+                Pesquisar
+            </button>
+        </div>
+    </form>
+
+            {% if artigos %}
+                {% for artigo in artigos %}
+                    <div class="card text-dark p-4 mb-4" id="artigo{{ artigo.id }}">
+
+                        {% if artigo.capitulo %}
+                            <p class="mb-1 fw-bold text-info">
+                                {{ artigo.capitulo.numero }}: {{ artigo.capitulo.descricao }}
+                            </p>
+                        {% endif %}
+                        {% if artigo.seccao %}
+                            <p class="mb-1 fw-bold text-warning">
+                                {{ artigo.seccao.numero }}: {{ artigo.seccao.descricao }}
+                            </p>
+                        {% endif %}
+                        {% if artigo.subseccao %}
+                            <p class="mb-1 fw-bold text-success">
+                                {{ artigo.subseccao.numero }}: {{ artigo.subseccao.descricao }}
+                            </p>
+                        {% endif %}
+
+                        <h5 class="fw-bold mb-2">{{ artigo.numero }} - {{ artigo.titulo|default:"(Sem título)" }}</h5>
+
+                        {% if termo %}
+                            <p class="text-muted mb-2">
+                                Mostrando {{ artigo.paragrafos|length }} de {{ artigo.total_paragrafos }} parágrafos
+                            </p>
+                        {% endif %}
+
+                        {% for paragrafo in artigo.paragrafos %}
+                            <p style="line-height: 1.7; margin-bottom: 8px;">{{ paragrafo|safe }}</p>
+                        {% endfor %}
+
+                        {% if termo %}
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-2"
+                                    data-bs-toggle="modal" data-bs-target="#modal{{ forloop.counter }}">
+                                Ver o artigo completo
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="modal{{ forloop.counter }}" tabindex="-1"
+                                 aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
+                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">
+                                                {{ artigo.numero }} - {{ artigo.titulo|default:"(Sem título)" }}
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            {% for paragrafo in artigo.todos_paragrafos_destacados %}
+                                                <p style="line-height: 1.7; margin-bottom: 8px;">{{ paragrafo|safe }}</p>
+                                            {% endfor %}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
+                        {% endif %}
 
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <div class="alert alert-warning">
-        Nenhum artigo encontrado.
-    </div>
-{% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-warning">Nenhum artigo encontrado.</div>
+            {% endif %}
 
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block script_lei_geral %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const links = document.querySelectorAll(".sidebar-link");
+    const artigos = document.querySelectorAll("[id^='artigo']");
+    const sidebar = document.getElementById("sidebarLinks");
+    const toggleBtn = document.getElementById("toggleSidebar");
+
+    function ativarLink() {
+        let scrollPos = window.scrollY + 150;
+
+        artigos.forEach(function (artigo) {
+            if (
+                scrollPos >= artigo.offsetTop &&
+                scrollPos < artigo.offsetTop + artigo.offsetHeight
+            ) {
+                let id = artigo.id.replace("artigo", "");
+                links.forEach(l => l.classList.remove("active"));
+                let ativo = document.getElementById("link" + id);
+                if (ativo) {
+                    ativo.classList.add("active");
+
+                    // Scroll automático da sidebar para manter ativo visível
+                    if (sidebar) {
+                        let sidebarTop = sidebar.scrollTop;
+                        let linkTop = ativo.offsetTop;
+                        let linkHeight = ativo.offsetHeight;
+                        let sidebarHeight = sidebar.clientHeight;
+
+                        if (linkTop < sidebarTop) {
+                            sidebar.scrollTop = linkTop - 10;
+                        } else if (linkTop + linkHeight > sidebarTop + sidebarHeight) {
+                            sidebar.scrollTop = linkTop - sidebarHeight / 2;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    window.addEventListener("scroll", ativarLink);
+
+    // Colapsável no mobile
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", function() {
+            sidebar.classList.toggle("collapsed");
+        });
+    }
+
+});
+</script>
 {% endblock %}

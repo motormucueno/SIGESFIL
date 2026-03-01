@@ -3,6 +3,8 @@ from empresas.models import ContraOrdenacao
 from servicos.models import Artigo
 import re
 from django.db.models import Q
+from servicos.models import Capitulo
+
 
 def home(request):
     return render(request, 'servicos/home.html')
@@ -77,8 +79,12 @@ def organizar_conteudo(texto):
 
     return paragrafos
 
+
+
+
 def lei_geral(request):
     termo = request.GET.get("q", "").strip()
+
     artigos = Artigo.objects.all().select_related(
         "capitulo", "seccao", "subseccao"
     ).order_by(
@@ -88,11 +94,9 @@ def lei_geral(request):
     artigos_filtrados = []
 
     for artigo in artigos:
-        # Organizar todos os parágrafos do artigo
         paragrafos = organizar_conteudo(artigo.conteudo)
-        artigo.total_paragrafos = len(paragrafos)  # total de parágrafos
+        artigo.total_paragrafos = len(paragrafos)
 
-        # Destacar o termo pesquisado em todos os parágrafos (para modal)
         if termo:
             termo_regex = re.compile(re.escape(termo), re.IGNORECASE)
             artigo.todos_paragrafos_destacados = [
@@ -102,24 +106,36 @@ def lei_geral(request):
             artigo.todos_paragrafos_destacados = paragrafos
 
         if termo:
-            # Apenas exibe parágrafos que contêm o termo na listagem
             paragrafos_exibidos = [
                 p for p in artigo.todos_paragrafos_destacados
                 if termo.lower() in p.lower()
             ]
 
-            # Exibe o artigo somente se algum parágrafo contém o termo
             if paragrafos_exibidos:
                 artigo.paragrafos = paragrafos_exibidos
                 artigos_filtrados.append(artigo)
         else:
-            # Sem pesquisa, exibe todos os parágrafos
             artigo.paragrafos = paragrafos
             artigos_filtrados.append(artigo)
 
+    # 🔥 NOVO: carregar capítulos para sidebar
+    capitulos = Capitulo.objects.prefetch_related(
+        "seccoes__subseccoes"
+    ).all().order_by("numero")
+
+    todos_artigos = Artigo.objects.all().order_by(
+        "capitulo__id", "seccao__id", "subseccao__id", "id"
+    )
+
     contexto = {
-        "artigos": artigos_filtrados,
-        "termo": termo
+        "artigos": artigos_filtrados,  # resultados da pesquisa
+        "todos_artigos": todos_artigos,  # sidebar completa
+        "termo": termo,
+        "capitulos": capitulos
     }
 
     return render(request, "servicos/lei_geral.html", contexto)
+
+
+
+
