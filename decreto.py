@@ -171,4 +171,166 @@ def inserir_dados(tabela:str=None, dados:list=None):
         cursor.execute(f'INSERT INTO {tabela} (nome, artigo, criado_em, actualizado_em) VALUES (?,?,?,?)', (dado[0],dado[1], agora,agora))
         conn.commit()
     conn.close()
-inserir_dados(tabela="empresas_contraordenacao", dados=contra_ordenacao_muito_graves)
+#inserir_dados(tabela="empresas_contraordenacao", dados=contra_ordenacao_muito_graves)
+
+import re
+import sqlite3
+from PyPDF2 import PdfReader
+
+# ==========================================
+# 1. CONECTAR AO BANCO DJANGO
+# ==========================================
+def conectar():
+    conn = sqlite3.connect("db.sqlite3")
+    conn.execute("PRAGMA foreign_keys = ON")
+    return conn
+
+# ==========================================
+# 2. LIMPAR DADOS ANTIGOS (OPCIONAL)
+# ==========================================
+def limpar_tabelas(conn):
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM servicos_artigo")
+    cursor.execute("DELETE FROM servicos_subseccao")
+    cursor.execute("DELETE FROM servicos_seccao")
+    cursor.execute("DELETE FROM servicos_capitulo")
+
+    conn.commit()
+
+# ==========================================
+# 3. EXTRAIR TEXTO DO PDF
+# ==========================================
+def extrair_texto_pdf(caminho_pdf):
+    reader = PdfReader(caminho_pdf)
+    texto = ""
+
+    for page in reader.pages:
+        conteudo = page.extract_text()
+        if conteudo:
+            texto += conteudo + "\n"
+
+    return texto
+
+# ==========================================
+# 4. IMPORTAR LEI
+# ==========================================
+def importar_lei(texto, conn):
+    cursor = conn.cursor()
+    linhas = texto.split("\n")
+
+    # PADRÕES
+    padrao_capitulo = re.compile(r"^\s*CAP[IÍ]TULO\s+([IVXLCDM]+|\d+)\s*$", re.IGNORECASE)
+    padrao_seccao = re.compile(r"^\s*SEC[CÇ][AÃ]O\s+([IVXLCDM]+|\d+)\s*$", re.IGNORECASE)
+    padrao_subseccao = re.compile(r"^\s*SUBSEC[CÇ][AÃ]O\s+([IVXLCDM]+|\d+)\s*$", re.IGNORECASE)
+    padrao_artigo = re.compile(r"^\s*ARTIGO\s+(\d+[A-Z]?)(\.?º?|°?)?\s*$", re.IGNORECASE)
+
+    capitulo_id = None
+    seccao_id = None
+    subseccao_id = None
+
+    i = 0
+    while i < len(linhas):
+        linha = linhas[i].strip()
+
+        # ================= CAPÍTULO =================
+        if padrao_capitulo.match(linha):
+            numero = linha
+            i += 1
+            while i < len(linhas) and not linhas[i].strip():
+                i += 1
+            descricao = linhas[i].strip() if i < len(linhas) else None
+            cursor.execute(
+                "INSERT INTO servicos_capitulo (numero, descricao) VALUES (?, ?)",
+                (numero, descricao)
+            )
+            capitulo_id = cursor.lastrowid
+            seccao_id = None
+            subseccao_id = None
+
+        # ================= SECÇÃO =================
+        elif padrao_seccao.match(linha):
+            numero = linha
+            i += 1
+            while i < len(linhas) and not linhas[i].strip():
+                i += 1
+            descricao = linhas[i].strip() if i < len(linhas) else None
+            cursor.execute(
+                "INSERT INTO servicos_seccao (numero, descricao, capitulo_id) VALUES (?, ?, ?)",
+                (numero, descricao, capitulo_id)
+            )
+            seccao_id = cursor.lastrowid
+            subseccao_id = None
+
+        # ================= SUBSECÇÃO =================
+        elif padrao_subseccao.match(linha):
+            numero = linha
+            i += 1
+            while i < len(linhas) and not linhas[i].strip():
+                i += 1
+            descricao = linhas[i].strip() if i < len(linhas) else None
+            cursor.execute(
+                "INSERT INTO servicos_subseccao (numero, descricao, seccao_id) VALUES (?, ?, ?)",
+                (numero, descricao, seccao_id)
+            )
+            subseccao_id = cursor.lastrowid
+
+        # ================= ARTIGO =================
+        elif padrao_artigo.match(linha):
+            numero_artigo = linha
+            i += 1
+            while i < len(linhas) and not linhas[i].strip():
+                i += 1
+            titulo_artigo = linhas[i].strip() if i < len(linhas) else None
+
+            conteudo = ""
+            i += 1
+            while i < len(linhas):
+                prox = linhas[i].strip()
+                if (padrao_capitulo.match(prox) or padrao_seccao.match(prox) or
+                    padrao_subseccao.match(prox) or padrao_artigo.match(prox)):
+                    i -= 1
+                    break
+                conteudo += prox + " "
+                i += 1
+
+            cursor.execute("""
+                INSERT INTO servicos_artigo
+                (numero, titulo, descricao, conteudo, capitulo_id, seccao_id, subseccao_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (
+                numero_artigo,
+                titulo_artigo,          # título do artigo (pode ser None)
+                titulo_artigo,          # descrição do artigo (pode ser None)
+                conteudo.strip(),
+                capitulo_id,
+                seccao_id,
+                subseccao_id
+            ))
+
+        i += 1
+
+    conn.commit()
+
+# ==========================================
+# 5. MAIN
+# ==========================================
+def main():
+    print("📖 Conectando ao banco Django...")
+    conn = conectar()
+
+    print("🧹 Limpando dados antigos...")
+    limpar_tabelas(conn)
+
+    print("📑 Extraindo texto do PDF...")
+    texto = extrair_texto_pdf("lei.pdf")
+
+    print("💾 Importando lei...")
+    importar_lei(texto, conn)
+
+    print("✅ Importação concluída com sucesso!")
+    conn.close()
+
+
+if __name__ == "__main__":
+    main()
