@@ -1,4 +1,3 @@
-
 {% extends 'servicos/base.html' %}
 {% block title %}Consulta Lei Geral do Trabalho{% endblock %}
 
@@ -9,78 +8,118 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Sidebar fixa */
+/* Layout geral */
+.main-wrapper {
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar-container {
+    position: relative;
+}
+
 .sidebar-fixa {
+    position: sticky;
+    top: 90px;
     max-height: 80vh;
     overflow-y: auto;
-    position: sticky;
-    top: 20px;
+    border-right: 1px solid #e9ecef;
 }
 
-.sidebar-fixa a {
-    text-decoration: none;
-    font-size: 0.9rem;
+.sidebar-link {
+    display: block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
 }
 
-.sidebar-fixa a:hover {
-    text-decoration: underline;
+.sidebar-link:hover {
+    background-color: #f1f3f5;
 }
 
 .sidebar-link.active {
-    font-weight: bold;
-    color: #0dcaf0 !important;
+    background-color: #0dcaf0;
+    color: white !important;
+    font-weight: 600;
 }
 
-/* Colapsável no mobile */
-#sidebarLinks.collapsed {
+/* Começa fechada */
+#sidebarLinks {
     display: none;
+}
+
+#sidebarLinks.show {
+    display: block;
+}
+
+/* Área de pesquisa */
+.search-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* Cards dos artigos */
+.article-card {
+    border: none;
+    border-left: 4px solid #0dcaf0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.article-card h5 {
+    font-weight: 700;
+}
+
+.article-card p {
+    line-height: 1.8;
+    font-size: 0.95rem;
+}
+
+/* Toggle botão */
+.toggle-btn {
+    font-size: 0.9rem;
 }
 </style>
 
-<div class="container-fluid mt-3">
-
-
-
-    <div class="row g-4">
+<div class="container-fluid main-wrapper mt-3">
+    <div class="row">
 
         <!-- SIDEBAR -->
-        <div class="col-md-3 mb-4">
-            <div class="card p-3 sidebar-fixa">
-                <h6 class="fw-bold mb-3 d-flex justify-content-between align-items-center">
-                    Artigos
-                    <button class="btn btn-sm btn-outline-secondary d-md-none" id="toggleSidebar">
+        <div class="col-lg-2 col-md-3 sidebar-container">
+            <div class="sidebar-fixa pe-2">
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <p class="mb-0">Pesquisar por artigos</p>
+                    <button class="btn btn-sm btn-outline-secondary toggle-btn" id="toggleSidebar">
                         ☰
                     </button>
-                </h6>
+                </div>
 
                 <div id="sidebarLinks">
                     {% for artigo in todos_artigos %}
-                        <div class="mb-1">
-                            <a href="#artigo{{ artigo.id }}"
-                               class="sidebar-link text-dark"
-                               id="link{{ artigo.id }}">
-                                {{ artigo.numero }}
-                            </a>
-                        </div>
+                        <a href="#artigo{{ artigo.id }}"
+                           class="sidebar-link text-light"
+                           id="link{{ artigo.id }}">
+                            {{ artigo.numero }}
+                        </a>
                     {% endfor %}
                 </div>
+
             </div>
         </div>
 
         <!-- CONTEÚDO -->
-        <div class="col-md-9">
+        <div class="col-lg-10 col-md-9">
+
             <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb" class="mb-3">
-                <ol class="breadcrumb bg-transparent px-0">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb small">
                     <li class="breadcrumb-item">
-                        <a href="{% url 'home' %}" class="text-info text-decoration-none">
-                            <i class="bi bi-house-door"></i> Início
-                        </a>
+                        <a href="{% url 'home' %}" class="text-decoration-none">Início</a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{% url 'legislacao' %}" class="text-info text-decoration-none">
-                            Legislação Laboral
-                        </a>
+                        <a href="{% url 'legislacao' %}" class="text-decoration-none">Legislação Laboral</a>
                     </li>
                     <li class="breadcrumb-item active text-light" aria-current="page">
                         Lei Geral do Trabalho
@@ -88,86 +127,81 @@ html {
                 </ol>
             </nav>
 
-            <h2 class="mb-4 fw-bold">Consulta da Lei Geral do Trabalho</h2>
-            <div class="small mb-3"><h5>Lei 12/23 de 27 de Dezembro</h5></div>
-            <!-- PESQUISA -->
-    <form method="get" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="q" class="form-control"
-                   placeholder="Digite uma palavra ou frase que contém na norma..."
-                   value="{{ termo }}">
-            <button class="btn btn-info text-white" type="submit">
-                Pesquisar
-            </button>
-        </div>
-    </form>
+            <!-- Cabeçalho -->
+            <div class="mb-4">
+                <h2 class="fw-bold">Consulta da Lei Geral do Trabalho</h2>
+                <div class="text-light">Lei 12/23 de 27 de Dezembro</div>
+            </div>
 
+            <!-- Pesquisa -->
+            <div class="search-box mb-4">
+                <form method="get">
+                    <div class="input-group">
+                        <input type="text"
+                               name="q"
+                               class="form-control"
+                               placeholder="Digite uma palavra ou frase que contenha na norma..."
+                               value="{{ termo }}">
+                        <button class="btn btn-info text-white">
+                            Pesquisar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Artigos -->
             {% if artigos %}
                 {% for artigo in artigos %}
-                    <div class="card text-dark p-4 mb-4" id="artigo{{ artigo.id }}">
+                    <div class="card article-card p-4 mb-4"
+                         id="artigo{{ artigo.id }}">
 
                         {% if artigo.capitulo %}
-                            <p class="mb-1 fw-bold text-info">
-                                {{ artigo.capitulo.numero }}: {{ artigo.capitulo.descricao }}
-                            </p>
-                        {% endif %}
-                        {% if artigo.seccao %}
-                            <p class="mb-1 fw-bold text-warning">
-                                {{ artigo.seccao.numero }}: {{ artigo.seccao.descricao }}
-                            </p>
-                        {% endif %}
-                        {% if artigo.subseccao %}
-                            <p class="mb-1 fw-bold text-success">
-                                {{ artigo.subseccao.numero }}: {{ artigo.subseccao.descricao }}
-                            </p>
+                            <div class="text-info fw-semibold small mb-1">
+                                {{ artigo.capitulo.numero }} - {{ artigo.capitulo.descricao }}
+                            </div>
                         {% endif %}
 
-                        <h5 class="fw-bold mb-2">{{ artigo.numero }} - {{ artigo.titulo|default:"(Sem título)" }}</h5>
+                        {% if artigo.seccao %}
+                            <div class="text-warning fw-semibold small mb-1">
+                                {{ artigo.seccao.numero }} - {{ artigo.seccao.descricao }}
+                            </div>
+                        {% endif %}
+
+                        {% if artigo.subseccao %}
+                            <div class="text-success fw-semibold small mb-2">
+                                {{ artigo.subseccao.numero }} - {{ artigo.subseccao.descricao }}
+                            </div>
+                        {% endif %}
+
+                        <h5 class="mb-3">
+                            {{ artigo.numero }} - {{ artigo.titulo|default:"(Sem título)" }}
+                        </h5>
 
                         {% if termo %}
-                            <p class="text-muted mb-2">
+                            <div class="text-muted small mb-2">
                                 Mostrando {{ artigo.paragrafos|length }} de {{ artigo.total_paragrafos }} parágrafos
-                            </p>
+                            </div>
                         {% endif %}
 
                         {% for paragrafo in artigo.paragrafos %}
-                            <p style="line-height: 1.7; margin-bottom: 8px;">{{ paragrafo|safe }}</p>
+                            <p>{{ paragrafo|safe }}</p>
                         {% endfor %}
 
                         {% if termo %}
-                            <button type="button" class="btn btn-outline-primary btn-sm mt-2"
-                                    data-bs-toggle="modal" data-bs-target="#modal{{ forloop.counter }}">
-                                Ver o artigo completo
+                            <button type="button"
+                                    class="btn btn-outline-primary btn-sm mt-2"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modal{{ forloop.counter }}">
+                                Ver artigo completo
                             </button>
-
-                            <!-- Modal -->
-                            <div class="modal fade" id="modal{{ forloop.counter }}" tabindex="-1"
-                                 aria-labelledby="modalLabel{{ forloop.counter }}" aria-hidden="true">
-                                <div class="modal-dialog modal-lg modal-dialog-scrollable">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalLabel{{ forloop.counter }}">
-                                                {{ artigo.numero }} - {{ artigo.titulo|default:"(Sem título)" }}
-                                            </h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            {% for paragrafo in artigo.todos_paragrafos_destacados %}
-                                                <p style="line-height: 1.7; margin-bottom: 8px;">{{ paragrafo|safe }}</p>
-                                            {% endfor %}
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         {% endif %}
 
                     </div>
                 {% endfor %}
             {% else %}
-                <div class="alert alert-warning">Nenhum artigo encontrado.</div>
+                <div class="alert alert-warning">
+                    Nenhum artigo encontrado.
+                </div>
             {% endif %}
 
         </div>
@@ -185,6 +219,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.getElementById("sidebarLinks");
     const toggleBtn = document.getElementById("toggleSidebar");
 
+    // Começa fechado
+    sidebar.classList.remove("show");
+
+    toggleBtn.addEventListener("click", function() {
+        sidebar.classList.toggle("show");
+    });
+
     function ativarLink() {
         let scrollPos = window.scrollY + 150;
 
@@ -196,21 +237,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 let id = artigo.id.replace("artigo", "");
                 links.forEach(l => l.classList.remove("active"));
                 let ativo = document.getElementById("link" + id);
+
                 if (ativo) {
                     ativo.classList.add("active");
 
-                    // Scroll automático da sidebar para manter ativo visível
-                    if (sidebar) {
-                        let sidebarTop = sidebar.scrollTop;
-                        let linkTop = ativo.offsetTop;
-                        let linkHeight = ativo.offsetHeight;
-                        let sidebarHeight = sidebar.clientHeight;
+                    // Scroll automático da sidebar
+                    let sidebarTop = sidebar.scrollTop;
+                    let linkTop = ativo.offsetTop;
+                    let sidebarHeight = sidebar.clientHeight;
 
-                        if (linkTop < sidebarTop) {
-                            sidebar.scrollTop = linkTop - 10;
-                        } else if (linkTop + linkHeight > sidebarTop + sidebarHeight) {
-                            sidebar.scrollTop = linkTop - sidebarHeight / 2;
-                        }
+                    if (linkTop < sidebarTop ||
+                        linkTop > sidebarTop + sidebarHeight - 40) {
+                        sidebar.scrollTop = linkTop - 40;
                     }
                 }
             }
@@ -218,14 +256,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     window.addEventListener("scroll", ativarLink);
-
-    // Colapsável no mobile
-    if (toggleBtn) {
-        toggleBtn.addEventListener("click", function() {
-            sidebar.classList.toggle("collapsed");
-        });
-    }
-
 });
 </script>
 {% endblock %}
